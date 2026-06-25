@@ -14,31 +14,35 @@ const NAV = [
 const CHARACTERS = [
   {
     name: 'Барон Сандор Рейвенфорт',
-    role: 'Носитель Испепелителя',
-    race: 'Воин',
+    race: 'Полуорк',
+    classLabel: 'Воин',
+    subLabel: 'Чемпион',
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/dbdb4226-b39d-4c4b-b9f3-3a4239be66d8.png',
-    desc: 'Расчётливый барон, что обзавёлся священным мечом против нежити и дьяволов. Носит черепа поверженных врагов как трофеи — чтобы низшие дьяволы знали, с кем имеют дело.',
+    quote: 'Такие понятия как закон, правила или мораль, могут существовать только между равными сторонами.',
   },
   {
     name: 'Лирика',
-    role: 'Жрица',
-    race: 'Полуэльф',
+    race: 'Лунный полуэльф',
+    classLabel: 'Жрица Неревара',
+    subLabel: 'Домен Упокоения',
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/538af9c3-cfa1-4727-98dd-de905d639f24.png',
-    desc: 'Знаток повадок нежити, чьи божественные силы развеивают орды восставших мертвецов. Её чутьё не раз выводило отряд на логова вампиров.',
+    quote: null,
   },
   {
     name: 'Ариана',
-    role: 'Жрица',
     race: 'Тифлинг',
+    classLabel: 'Чудесное дитя',
+    subLabel: 'Домен Жизни',
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/8694c0d8-f21e-4312-b736-6e8d8a54b785.png',
-    desc: 'Тифлинг, рождённая со связью с инфернальными мирами. Вместе с Лирикой её священная мощь обращает в прах легионы нежити у стен Щита Хельма.',
+    quote: null,
   },
   {
     name: 'Ксарн',
-    role: 'Странник Подземья',
-    race: 'Дроу',
+    race: 'Илитири',
+    classLabel: 'Воин',
+    subLabel: 'Стрелок',
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/15138bd1-8961-411e-a20a-5a1b6a400de2.png',
-    desc: 'Дроу, привыкший к тьме и опасности. Объединился с отрядом по холодному расчёту — вместе пережить падение Элтуреля проще, чем в одиночку.',
+    quote: null,
   },
 ];
 
@@ -119,7 +123,7 @@ const CHRONICLE = [
         paragraphs: [
           'Затем Сандор схватил Клава за грудки и приставил Испепелитель к его горлу. Он прямо обвинил вампира в том, что тот намеренно отправил их в дом Ратханда — зная, что там есть другой вампир — чтобы избавиться от отряда, и в первую очередь от Лирики. Вампир, по мнению Сандора, не мог этого не знать.',
           'Однако устраивать побоище у всех на виду Сандор не захотел и опустил меч.',
-          'Клав потребовал, чтобы отряд убрался из лагеря. Сандор отказался уходить до тех пор, пока отряд не отдохнёт — понимая, что вампир не станет обострять на глазах у своей кормовой базы. Клав отступил.',
+          'Клав потребовал, чтобы отряд убрался из лагеря. Сандор отказался уходить до тех пор, пока отряд не отдохнёт — понимая, что вампир не станет обострять ситуацию на глазах у своей кормовой базы. Клав отступил.',
           'В эту ночь отряд спал по очереди, выставив дежурство.',
         ],
       },
@@ -371,10 +375,15 @@ const Index = () => {
               {/* Инфо */}
               <div className="p-5 flex flex-col flex-1">
                 <h3 className="font-display text-lg gold-gradient leading-tight">{c.name}</h3>
-                <p className="font-serif italic text-gold/70 mt-1 text-sm">{c.role}</p>
                 <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{c.race}</p>
                 <div className="w-10 h-px bg-gold/30 my-3" />
-                <p className="font-body text-sm text-foreground/75 leading-relaxed">{c.desc}</p>
+                <p className="font-serif text-base text-foreground/90">{c.classLabel}</p>
+                <p className="text-xs uppercase tracking-widest text-gold/60 mt-1">{c.subLabel}</p>
+                {c.quote && (
+                  <blockquote className="mt-4 border-l-2 border-gold/40 pl-3 font-serif italic text-sm text-foreground/65 leading-relaxed">
+                    «{c.quote}»
+                  </blockquote>
+                )}
               </div>
             </article>
           ))}
