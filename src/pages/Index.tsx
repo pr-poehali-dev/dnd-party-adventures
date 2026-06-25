@@ -8,6 +8,7 @@ const NAV = [
   { id: 'hero', label: 'Главная' },
   { id: 'characters', label: 'Персонажи' },
   { id: 'story', label: 'История' },
+  { id: 'faces', label: 'Лица' },
   { id: 'chronicle', label: 'Хроника' },
 ];
 
@@ -153,6 +154,83 @@ const CHRONICLE = [
     ],
   },
 ];
+
+const FACES = [
+  {
+    name: 'Клав Икайя',
+    role: 'Верховный Всадник Элтуреля',
+    tag: 'Вампир',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
+    desc: 'Герой города, скрывающий природу нежити. Предложил отряду помощь — но Сандор с самого начала знал, чего стоит его гостеприимство.',
+  },
+  {
+    name: 'Лилит',
+    role: 'Отродье Клава',
+    tag: 'Вампирское отродье',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/7e7dbbe1-2780-464e-ba71-a867dbf480c7.png',
+    desc: 'Одна из двух отродий Верховного Всадника, державшихся у него за спиной в лагере выживших.',
+  },
+  {
+    name: 'Моркар',
+    role: 'Отродье Клава',
+    tag: 'Вампирское отродье',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/a57c088a-667f-4e98-aa87-89195a879ca4.png',
+    desc: 'Второе отродье Клава. Молчалив и держится в тени — как и подобает тому, кто давно перестал быть человеком.',
+  },
+  {
+    name: 'Харкина Хант',
+    role: 'Горожанка Элтуреля',
+    tag: 'Выжившая',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/d0c09442-75c8-446b-a301-744027a20211.png',
+    desc: 'Спасена отрядом от трёх бородатых дьяволов вместе с детьми — Эзо и Браском. Укрылась в лагере выживших на рынке Шеары.',
+  },
+  {
+    name: 'Лефит Эзим',
+    role: 'Волшебница',
+    tag: 'Союзник',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/9062dd1e-17ab-4e26-b32a-379552dd3221.png',
+    desc: 'Пережила осаду таверны в магическом подпространстве. Попросила отряд сопроводить её к Щиту Хельма — в надежде найти Рейвенгарда.',
+  },
+];
+
+// ─── Компонент NPC ───────────────────────────────────────────────────────────
+
+const FacesSection = () => (
+  <section id="faces" className="relative z-10 py-24 container mx-auto px-4">
+    <SectionTitle eyebrow="Встреченные в Авернусе" title="Лица" />
+    <div className="mt-14 flex flex-wrap justify-center gap-6">
+      {FACES.map((f) => (
+        <div
+          key={f.name}
+          className="group relative w-44 flex flex-col items-center"
+        >
+          {/* Портрет */}
+          <div className="relative w-36 h-44 rounded-md overflow-hidden infernal-border">
+            <img
+              src={f.portrait}
+              alt={f.name}
+              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+            {/* Тег */}
+            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] uppercase tracking-widest font-display px-2 py-0.5 rounded bg-blood/70 text-foreground/90 border border-gold/20">
+              {f.tag}
+            </span>
+          </div>
+          {/* Имя и роль */}
+          <h4 className="font-display text-sm gold-gradient text-center mt-3 leading-tight">{f.name}</h4>
+          <p className="font-serif italic text-xs text-gold/60 text-center mt-0.5">{f.role}</p>
+          {/* Описание появляется при наведении */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-56 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -translate-y-2 group-hover:-translate-y-3">
+            <div className="infernal-border rounded-lg bg-card p-3 mt-1 shadow-2xl">
+              <p className="font-body text-xs text-foreground/80 leading-relaxed text-center">{f.desc}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
 
 // ─── Компонент хроники ──────────────────────────────────────────────────────
 
@@ -421,6 +499,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* FACES */}
+      <FacesSection />
 
       {/* CHRONICLE */}
       <ChronicleSection />
