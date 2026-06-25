@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 
 const HERO_IMG = 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/files/d5de3daf-2ae0-40d3-ab23-c8c146a45766.jpg';
@@ -193,6 +193,97 @@ const FACES = [
   },
 ];
 
+// ─── NPC-ссылка с всплывающим портретом ─────────────────────────────────────
+
+const NpcLink = ({ name, portrait, role }: { name: string; portrait: string; role: string }) => {
+  const [visible, setVisible] = useState(false);
+
+  const scrollToFace = () => {
+    document.getElementById('faces')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <span className="relative inline-block">
+      <button
+        onClick={scrollToFace}
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        className="font-serif text-gold/90 underline decoration-gold/40 underline-offset-2 hover:text-gold transition-colors cursor-pointer"
+      >
+        {name}
+      </button>
+      {visible && (
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 pointer-events-none animate-fade-in-up">
+          <span className="flex flex-col items-center">
+            <span className="w-28 rounded-md overflow-hidden infernal-border shadow-2xl block">
+              <img src={portrait} alt={name} className="w-full h-36 object-cover object-top" />
+              <span className="block bg-card px-2 py-1 text-center">
+                <span className="font-display text-xs gold-gradient block leading-tight">{name}</span>
+                <span className="font-serif italic text-[10px] text-gold/60 block">{role}</span>
+              </span>
+            </span>
+            <span className="w-2 h-2 bg-card border-r border-b border-gold/30 rotate-45 -mt-1 block" />
+          </span>
+        </span>
+      )}
+    </span>
+  );
+};
+
+// Карта имён → данные NPC для авто-замены в текстах
+const NPC_MAP: Record<string, { portrait: string; role: string }> = {
+  'Клав Икайя': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
+    role: 'Верховный Всадник',
+  },
+  'Клава': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
+    role: 'Верховный Всадник',
+  },
+  'Клав': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
+    role: 'Верховный Всадник',
+  },
+  'Лилит': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/7e7dbbe1-2780-464e-ba71-a867dbf480c7.png',
+    role: 'Отродье Клава',
+  },
+  'Моркар': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/a57c088a-667f-4e98-aa87-89195a879ca4.png',
+    role: 'Отродье Клава',
+  },
+  'Харкина Хант': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/d0c09442-75c8-446b-a301-744027a20211.png',
+    role: 'Горожанка Элтуреля',
+  },
+  'Харкину': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/d0c09442-75c8-446b-a301-744027a20211.png',
+    role: 'Горожанка Элтуреля',
+  },
+  'Лефит Эзим': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/9062dd1e-17ab-4e26-b32a-379552dd3221.png',
+    role: 'Волшебница',
+  },
+  'Лефит': {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/9062dd1e-17ab-4e26-b32a-379552dd3221.png',
+    role: 'Волшебница',
+  },
+};
+
+// Разбивает строку на части, заменяя имена NPC на компоненты NpcLink
+const renderWithNpcLinks = (text: string): React.ReactNode => {
+  const names = Object.keys(NPC_MAP).sort((a, b) => b.length - a.length);
+  const regex = new RegExp(`(${names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
+  const parts = text.split(regex);
+  return parts.map((part, i) => {
+    const npc = NPC_MAP[part];
+    if (npc) {
+      return <NpcLink key={i} name={part} portrait={npc.portrait} role={npc.role} />;
+    }
+    return part;
+  });
+};
+
 // ─── Компонент NPC ───────────────────────────────────────────────────────────
 
 const FacesSection = () => (
@@ -316,7 +407,7 @@ const ChronicleSection = () => {
                           <div className="px-8 pb-6 pt-1 bg-card/50 space-y-3 border-t border-gold/10">
                             {event.paragraphs.map((p, pi) => (
                               <p key={pi} className="font-body text-sm text-foreground/80 leading-relaxed">
-                                {p}
+                                {renderWithNpcLinks(p)}
                               </p>
                             ))}
                           </div>
