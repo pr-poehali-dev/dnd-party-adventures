@@ -273,6 +273,13 @@ const FACES = [
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/61e0275e-2606-4ad2-a567-213f95ada549.png',
     desc: 'Минотавр, командовавший демонами в таверне «Пара Чёрных Рогов». Поверил Сандору на слово и позволил забрать Испепелитель.',
   },
+  {
+    name: 'Лаура Зураг',
+    role: 'Глава культистов Зариэль',
+    tag: 'Культист',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/7e124855-f142-499a-970b-30f2255dfa79.png',
+    desc: 'Возглавляла засаду культистов в мясной лавке Медвесыч. Предложила Сандору служение Зариэль в обмен на устойчивость к жаре Аверно. Получила отказ — и клинок.',
+  },
 ];
 
 // ─── NPC-ссылка с всплывающим портретом ─────────────────────────────────────
@@ -366,6 +373,11 @@ const NPC_DATA = {
     role: 'Командир демонов',
     forms: ['Коровек', 'Коровека', 'Коровеку', 'Коровеком', 'Коровеке'],
   },
+  laura: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/7e124855-f142-499a-970b-30f2255dfa79.png',
+    role: 'Глава культистов',
+    forms: ['Лаура Зураг', 'Лауры Зураг', 'Лауре Зураг', 'Лауру Зураг', 'Лаурой Зураг', 'Лаура', 'Лауры', 'Лауре', 'Лауру', 'Лаурой'],
+  },
 };
 
 const NPC_MAP: Record<string, { portrait: string; role: string }> = {};
@@ -391,42 +403,105 @@ const renderWithNpcLinks = (text: string): React.ReactNode => {
 
 // ─── Компонент NPC ───────────────────────────────────────────────────────────
 
-const FacesSection = () => (
-  <section id="faces" className="relative z-10 py-24 container mx-auto px-4">
-    <SectionTitle eyebrow="Встреченные в Авернусе" title="Лица" />
-    <div className="mt-14 flex flex-wrap justify-center gap-6">
-      {FACES.map((f) => (
-        <div
-          key={f.name}
-          className="group relative w-44 flex flex-col items-center"
-        >
-          {/* Портрет */}
-          <div className="relative w-36 h-44 rounded-md overflow-hidden infernal-border">
-            <img
-              src={f.portrait}
-              alt={f.name}
-              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-            {/* Тег */}
-            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] uppercase tracking-widest font-display px-2 py-0.5 rounded bg-blood/70 text-foreground/90 border border-gold/20">
-              {f.tag}
-            </span>
-          </div>
-          {/* Имя и роль */}
-          <h4 className="font-display text-sm gold-gradient text-center mt-3 leading-tight">{f.name}</h4>
-          <p className="font-serif italic text-xs text-gold/60 text-center mt-0.5">{f.role}</p>
-          {/* Описание появляется при наведении */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-56 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none -translate-y-2 group-hover:-translate-y-3">
-            <div className="infernal-border rounded-lg bg-card p-3 mt-1 shadow-2xl">
-              <p className="font-body text-xs text-foreground/80 leading-relaxed text-center">{f.desc}</p>
-            </div>
-          </div>
+type Face = typeof FACES[number];
+
+const FaceModal = ({ face, onClose }: { face: Face; onClose: () => void }) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9998] flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Затемнение */}
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      {/* Карточка */}
+      <div
+        className="relative z-10 w-full max-w-sm infernal-border rounded-xl overflow-hidden shadow-2xl animate-fade-in-up"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Портрет */}
+        <div className="relative h-96">
+          <img
+            src={face.portrait}
+            alt={face.name}
+            className="w-full h-full object-cover object-top"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
+          {/* Тег */}
+          <span className="absolute top-4 left-4 text-[10px] uppercase tracking-widest font-display px-2 py-0.5 rounded bg-blood/80 text-foreground/90 border border-gold/20">
+            {face.tag}
+          </span>
+          {/* Кнопка закрыть */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-background/60 border border-gold/30 text-gold hover:text-foreground hover:bg-background/90 transition-colors"
+          >
+            <Icon name="X" size={14} />
+          </button>
         </div>
-      ))}
-    </div>
-  </section>
-);
+        {/* Текст */}
+        <div className="bg-card px-6 py-5">
+          <h3 className="font-display text-xl gold-gradient leading-tight">{face.name}</h3>
+          <p className="font-serif italic text-sm text-gold/60 mt-0.5">{face.role}</p>
+          <p className="font-body text-sm text-foreground/80 leading-relaxed mt-4">{face.desc}</p>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+const FacesSection = () => {
+  const [selected, setSelected] = useState<Face | null>(null);
+
+  return (
+    <section id="faces" className="relative z-10 py-24 container mx-auto px-4">
+      <SectionTitle eyebrow="Встреченные в Авернусе" title="Лица" />
+      <div className="mt-14 flex flex-wrap justify-center gap-6">
+        {FACES.map((f) => (
+          <div
+            key={f.name}
+            className="group relative w-44 flex flex-col items-center cursor-pointer"
+            onClick={() => setSelected(f)}
+          >
+            {/* Портрет */}
+            <div className="relative w-36 h-44 rounded-md overflow-hidden infernal-border">
+              <img
+                src={f.portrait}
+                alt={f.name}
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent group-hover:from-background/50 transition-all duration-300" />
+              {/* Тег */}
+              <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] uppercase tracking-widest font-display px-2 py-0.5 rounded bg-blood/70 text-foreground/90 border border-gold/20">
+                {f.tag}
+              </span>
+              {/* Иконка раскрытия */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-8 h-8 rounded-full bg-background/70 border border-gold/40 flex items-center justify-center">
+                  <Icon name="Maximize2" size={13} className="text-gold" />
+                </div>
+              </div>
+            </div>
+            {/* Имя и роль */}
+            <h4 className="font-display text-sm gold-gradient text-center mt-3 leading-tight group-hover:text-primary transition-colors">{f.name}</h4>
+            <p className="font-serif italic text-xs text-gold/60 text-center mt-0.5">{f.role}</p>
+          </div>
+        ))}
+      </div>
+      {selected && <FaceModal face={selected} onClose={() => setSelected(null)} />}
+    </section>
+  );
+};
 
 // ─── Компонент хроники ──────────────────────────────────────────────────────
 
