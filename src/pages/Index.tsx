@@ -775,8 +775,8 @@ const BeastPage = ({ beast }: { beast: Beast }) => (
               <p className="text-[9px] uppercase tracking-wider text-gold/50 font-display">{s.name}</p>
               <p className="font-display text-base text-foreground mt-0.5">{s.val}</p>
               <div className="w-px h-2 bg-gold/20 mx-auto my-0.5" />
-              <p className="text-[10px] text-primary font-serif">{s.mod}</p>
-              <p className="text-[9px] text-gold/50 font-serif">{s.save}</p>
+              <p className="text-xs text-primary font-serif">{s.mod}</p>
+              <p className="text-[11px] text-gold/60 font-serif">{s.save}</p>
             </div>
           ))}
         </div>
@@ -922,8 +922,8 @@ const BeastModal = ({ beast, onClose }: { beast: Beast; onClose: () => void }) =
                     <p className="text-[9px] uppercase tracking-wider text-gold/50 font-display">{s.name}</p>
                     <p className="font-display text-xl text-foreground mt-0.5">{s.val}</p>
                     <div className="w-px h-2 bg-gold/20 mx-auto my-0.5" />
-                    <p className="text-xs text-primary font-serif">{s.mod}</p>
-                    <p className="text-[10px] text-gold/50 font-serif">{s.save}</p>
+                    <p className="text-sm text-primary font-serif">{s.mod}</p>
+                    <p className="text-xs text-gold/60 font-serif">{s.save}</p>
                   </div>
                 ))}
               </div>
