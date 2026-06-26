@@ -778,10 +778,143 @@ const BeastPage = ({ beast }: { beast: Beast }) => (
   </div>
 );
 
+const BeastModal = ({ beast, onClose }: { beast: Beast; onClose: () => void }) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+      <div
+        className="relative z-10 w-full max-w-5xl infernal-border rounded-xl bg-card shadow-2xl overflow-hidden animate-fade-in-up"
+        style={{ maxHeight: '90vh' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Кнопка закрыть */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-background/60 border border-gold/30 text-gold hover:text-foreground hover:bg-background/90 transition-colors"
+        >
+          <Icon name="X" size={14} />
+        </button>
+
+        <div className="flex flex-col md:flex-row overflow-hidden" style={{ maxHeight: '90vh' }}>
+          {/* Левая колонка — иллюстрация */}
+          <div className="relative md:w-2/5 h-64 md:h-auto shrink-0 bg-background/60">
+            <img
+              src={beast.image}
+              alt={beast.name}
+              className="w-full h-full object-contain object-center"
+              style={{ filter: 'drop-shadow(0 0 32px hsl(var(--primary)/0.5))' }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80 hidden md:block" />
+            <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent md:hidden" />
+          </div>
+
+          {/* Правая колонка — статблок */}
+          <div className="flex-1 overflow-y-auto px-8 py-7 space-y-5">
+            <div>
+              <h2 className="font-display text-3xl gold-gradient leading-tight">{beast.name}</h2>
+              <p className="font-serif italic text-gold/60 text-lg">{beast.subtitle}</p>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {beast.tags.map(t => (
+                  <span key={t} className="text-[10px] uppercase tracking-widest font-display px-2 py-0.5 rounded bg-blood/60 border border-gold/20 text-foreground/80">{t}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: 'КЗ', val: beast.ac },
+                { label: 'Хиты', val: beast.hp },
+                { label: 'Скорость', val: beast.speed },
+                { label: 'Инициатива', val: beast.initiative },
+                { label: 'Опасность', val: `${beast.cr} (${beast.xp} опыта)` },
+                { label: 'Бонус Мастерства', val: beast.profBonus },
+              ].map(({ label, val }) => (
+                <div key={label} className="bg-background/50 rounded px-3 py-2 border border-gold/10">
+                  <p className="text-[10px] uppercase tracking-wider text-gold/50 font-display">{label}</p>
+                  <p className="font-serif text-foreground/90 text-sm mt-0.5 leading-tight">{val}</p>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-gold/50 font-display mb-2">Характеристики</p>
+              <div className="grid grid-cols-6 gap-1.5 text-center">
+                {beast.stats.map(s => (
+                  <div key={s.name} className="bg-background/50 rounded py-2.5 border border-gold/10">
+                    <p className="text-[9px] uppercase tracking-wider text-gold/50 font-display">{s.name}</p>
+                    <p className="font-display text-xl text-foreground mt-0.5">{s.val}</p>
+                    <div className="w-px h-2 bg-gold/20 mx-auto my-0.5" />
+                    <p className="text-xs text-primary font-serif">{s.mod}</p>
+                    <p className="text-[10px] text-gold/50 font-serif">{s.save}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-gold/30 text-center mt-1 font-serif italic">модификатор / спасбросок</p>
+            </div>
+
+            <div className="space-y-1.5">
+              {[
+                { label: 'Сопр. урону', val: beast.resistances.join(', ') },
+                { label: 'Иммунитеты', val: beast.immunities.join(', ') },
+                { label: 'Чувства', val: beast.senses },
+                { label: 'Языки', val: beast.languages },
+                { label: 'Среда', val: beast.habitat },
+              ].map(({ label, val }) => (
+                <div key={label} className="flex gap-2 flex-wrap items-start">
+                  <span className="text-[10px] uppercase tracking-wider text-gold/50 font-display shrink-0 pt-0.5">{label}:</span>
+                  <span className="font-serif text-sm text-foreground/80">{val}</span>
+                </div>
+              ))}
+            </div>
+
+            {beast.traits.length > 0 && (
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-gold/50 font-display mb-2 border-t border-gold/10 pt-4">Особенности</p>
+                <div className="space-y-2">
+                  {beast.traits.map(t => (
+                    <div key={t.name}>
+                      <span className="font-serif font-bold text-gold/90 text-sm">{t.name}. </span>
+                      <span className="font-body text-sm text-foreground/75 leading-relaxed">{t.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-gold/50 font-display mb-2 border-t border-gold/10 pt-4">Действия</p>
+              <div className="space-y-2">
+                {beast.actions.map(a => (
+                  <div key={a.name}>
+                    <span className="font-serif font-bold text-gold/90 text-sm">{a.name}. </span>
+                    <span className="font-body text-sm text-foreground/75 leading-relaxed">{a.desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
 const BestiarySection = () => {
   const [page, setPage] = useState(0);
   const [dir, setDir] = useState<'left' | 'right'>('right');
   const [animating, setAnimating] = useState(false);
+  const [modal, setModal] = useState<Beast | null>(null);
 
   const goTo = (next: number, direction: 'left' | 'right') => {
     if (animating || next === page) return;
@@ -802,11 +935,17 @@ const BestiarySection = () => {
       <div className="mt-14 max-w-4xl mx-auto">
         {/* Книга */}
         <div
-          className="relative infernal-border rounded-xl bg-card shadow-2xl overflow-hidden"
+          className="relative infernal-border rounded-xl bg-card shadow-2xl overflow-hidden cursor-pointer group"
           style={{ minHeight: '560px' }}
+          onClick={() => setModal(beast)}
         >
           {/* Корешок книги */}
           <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-card/50 border-r border-gold/20 z-10 hidden md:block" />
+
+          {/* Иконка раскрытия */}
+          <div className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-background/60 border border-gold/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Icon name="Maximize2" size={13} className="text-gold" />
+          </div>
 
           {/* Страница с анимацией */}
           <div
@@ -820,7 +959,7 @@ const BestiarySection = () => {
         {/* Навигация */}
         <div className="flex items-center justify-between mt-6 px-2">
           <button
-            onClick={() => goTo(page - 1, 'left')}
+            onClick={e => { e.stopPropagation(); goTo(page - 1, 'left'); }}
             disabled={page === 0}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/30 text-gold/70 hover:text-gold hover:border-gold/60 transition-colors disabled:opacity-20 disabled:cursor-not-allowed font-serif text-sm"
           >
@@ -828,12 +967,11 @@ const BestiarySection = () => {
             Предыдущий
           </button>
 
-          {/* Индикатор страниц */}
           <div className="flex items-center gap-2">
             {BESTIARY.map((b, i) => (
               <button
                 key={b.name}
-                onClick={() => goTo(i, i > page ? 'right' : 'left')}
+                onClick={e => { e.stopPropagation(); goTo(i, i > page ? 'right' : 'left'); }}
                 className={`transition-all duration-300 rounded-full ${i === page ? 'w-6 h-2 bg-primary' : 'w-2 h-2 bg-gold/30 hover:bg-gold/60'}`}
                 title={b.name}
               />
@@ -841,7 +979,7 @@ const BestiarySection = () => {
           </div>
 
           <button
-            onClick={() => goTo(page + 1, 'right')}
+            onClick={e => { e.stopPropagation(); goTo(page + 1, 'right'); }}
             disabled={page === BESTIARY.length - 1}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/30 text-gold/70 hover:text-gold hover:border-gold/60 transition-colors disabled:opacity-20 disabled:cursor-not-allowed font-serif text-sm"
           >
@@ -850,11 +988,12 @@ const BestiarySection = () => {
           </button>
         </div>
 
-        {/* Счётчик */}
         <p className="text-center font-serif italic text-gold/40 text-xs mt-3">
-          {page + 1} из {BESTIARY.length} {BESTIARY.length === 1 ? 'существа' : 'существ'}
+          {page + 1} из {BESTIARY.length} {BESTIARY.length === 1 ? 'существа' : 'существ'} · нажми для увеличения
         </p>
       </div>
+
+      {modal && <BeastModal beast={modal} onClose={() => setModal(null)} />}
     </section>
   );
 };
