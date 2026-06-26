@@ -52,7 +52,7 @@ const CHARACTERS = [
 // Бестиарий
 const BESTIARY = [
   {
-    name: 'Бородатый дьявол (Барбазу)',
+    name: 'Бородатый дьявол',
     subtitle: 'Барбазу',
     image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/95f9294d-dad9-4ec3-81e7-ae26a8c1b7ec.png',
     tags: ['Дьявол', 'Законно-Злой', 'Средний'],
@@ -99,7 +99,7 @@ const BESTIARY = [
     ],
   },
   {
-    name: 'Шипастый дьявол (Гаматула)',
+    name: 'Шипастый дьявол',
     subtitle: 'Гаматула',
     image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/14f2f326-3211-4326-b371-ad14edbe95f5.png',
     tags: ['Дьявол', 'Законно-Злой', 'Средний'],
