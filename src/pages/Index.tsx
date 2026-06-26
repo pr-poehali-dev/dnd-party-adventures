@@ -11,6 +11,7 @@ const NAV = [
   { id: 'story', label: 'История' },
   { id: 'faces', label: 'Лица' },
   { id: 'chronicle', label: 'Хроника' },
+  { id: 'bestiary', label: 'Бестиарий' },
 ];
 
 const CHARACTERS = [
@@ -45,6 +46,57 @@ const CHARACTERS = [
     subLabel: 'Стрелок',
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/15138bd1-8961-411e-a20a-5a1b6a400de2.png',
     quote: 'Я не доверяю служителям богов. Они пойдут на всё, чтобы угодить своим покровителям.',
+  },
+];
+
+// Бестиарий
+const BESTIARY = [
+  {
+    name: 'Бородатый дьявол',
+    subtitle: 'Барбазу',
+    image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/95f9294d-dad9-4ec3-81e7-ae26a8c1b7ec.png',
+    tags: ['Дьявол', 'Законно-Злой', 'Средний'],
+    habitat: 'Девять Преисподних',
+    cr: '3',
+    xp: '700',
+    profBonus: '+2',
+    ac: 13,
+    initiative: '+2',
+    hp: '58 (9d8 + 18)',
+    speed: '30 фт.',
+    stats: [
+      { name: 'СИЛ', val: 16, mod: '+3', save: '+5' },
+      { name: 'ЛОВ', val: 15, mod: '+2', save: '+2' },
+      { name: 'ТЕЛ', val: 15, mod: '+2', save: '+4' },
+      { name: 'ИНТ', val: 9,  mod: '−1', save: '−1' },
+      { name: 'МДР', val: 11, mod: '+0', save: '+0' },
+      { name: 'ХАР', val: 14, mod: '+2', save: '+4' },
+    ],
+    resistances: ['Холод'],
+    immunities: ['Огонь', 'Яд', 'Испуганный', 'Отравленный'],
+    senses: 'Тёмное зрение 120 фт. (сквозь магическую Тьму), пассивное Восприятие 10',
+    languages: 'Инфернальный, Телепатия 120 фт.',
+    treasures: 'Оружейные',
+    traits: [
+      {
+        name: 'Сопротивление магии',
+        desc: 'Бородатый дьявол совершает с Преимуществом спасброски от заклинаний и прочих магических эффектов.',
+      },
+    ],
+    actions: [
+      {
+        name: 'Мультиатака',
+        desc: 'Дьявол совершает одну атаку Бородой и одну атаку Дьявольской глефой.',
+      },
+      {
+        name: 'Борода',
+        desc: 'Бросок рукопашной атаки: +5, досягаемость 5 фт. Попадание: 7 (1к8 + 3) Колющего урона, и цель получает состояние Отравленный до начала следующего хода дьявола. Пока цель отравлена таким образом, она не может восстанавливать Хиты.',
+      },
+      {
+        name: 'Дьявольская глефа',
+        desc: 'Бросок рукопашной атаки: +5, досягаемость 10 фт. Попадание: 8 (1к10 + 3) Рубящего урона. Если у цели нет дьявольской раны — Спасбросок Телосложения Сл 12. Провал: цель теряет 5 (1к10) Хитов в начале каждого своего хода. Рана закрывается спустя 1 минуту, после восстановления Хитов заклинанием или успешной проверки Мудрости (Медицина) Сл 12 в пределах 5 фт.',
+      },
+    ],
   },
 ];
 
@@ -606,6 +658,207 @@ const ChronicleSection = () => {
   );
 };
 
+// ─── Бестиарий ───────────────────────────────────────────────────────────────
+
+type Beast = typeof BESTIARY[number];
+
+const BeastPage = ({ beast }: { beast: Beast }) => (
+  <div className="w-full h-full flex flex-col md:flex-row overflow-hidden">
+    {/* Левая колонка — иллюстрация */}
+    <div className="relative md:w-2/5 h-56 md:h-full shrink-0 bg-background/60">
+      <img
+        src={beast.image}
+        alt={beast.name}
+        className="w-full h-full object-contain object-center"
+        style={{ filter: 'drop-shadow(0 0 24px hsl(var(--primary)/0.4))' }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80 hidden md:block" />
+      <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent md:hidden" />
+    </div>
+
+    {/* Правая колонка — статблок */}
+    <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 text-sm">
+      {/* Заголовок */}
+      <div>
+        <h2 className="font-display text-2xl gold-gradient leading-tight">{beast.name}</h2>
+        <p className="font-serif italic text-gold/60 text-base">{beast.subtitle}</p>
+        <div className="flex flex-wrap gap-1.5 mt-2">
+          {beast.tags.map(t => (
+            <span key={t} className="text-[10px] uppercase tracking-widest font-display px-2 py-0.5 rounded bg-blood/60 border border-gold/20 text-foreground/80">{t}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Базовые характеристики */}
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: 'КЗ', val: beast.ac },
+          { label: 'Хиты', val: beast.hp },
+          { label: 'Скорость', val: beast.speed },
+          { label: 'Инициатива', val: beast.initiative },
+          { label: 'Опасность', val: `${beast.cr} (${beast.xp} опыта)` },
+          { label: 'Бонус Мастерства', val: beast.profBonus },
+        ].map(({ label, val }) => (
+          <div key={label} className="bg-background/50 rounded px-2 py-1.5 border border-gold/10">
+            <p className="text-[10px] uppercase tracking-wider text-gold/50 font-display">{label}</p>
+            <p className="font-serif text-foreground/90 text-xs mt-0.5 leading-tight">{val}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Характеристики */}
+      <div>
+        <p className="text-[10px] uppercase tracking-widest text-gold/50 font-display mb-2">Характеристики</p>
+        <div className="grid grid-cols-6 gap-1 text-center">
+          {beast.stats.map(s => (
+            <div key={s.name} className="bg-background/50 rounded py-2 border border-gold/10">
+              <p className="text-[9px] uppercase tracking-wider text-gold/50 font-display">{s.name}</p>
+              <p className="font-display text-base text-foreground mt-0.5">{s.val}</p>
+              <div className="w-px h-2 bg-gold/20 mx-auto my-0.5" />
+              <p className="text-[10px] text-primary font-serif">{s.mod}</p>
+              <p className="text-[9px] text-gold/50 font-serif">{s.save}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-[10px] text-gold/30 text-center mt-1 font-serif italic">модификатор / спасбросок</p>
+      </div>
+
+      {/* Сопротивления и иммунитеты */}
+      <div className="space-y-1">
+        <div className="flex gap-2 flex-wrap items-start">
+          <span className="text-[10px] uppercase tracking-wider text-gold/50 font-display shrink-0 pt-0.5">Сопр. урону:</span>
+          <span className="font-serif text-xs text-foreground/80">{beast.resistances.join(', ')}</span>
+        </div>
+        <div className="flex gap-2 flex-wrap items-start">
+          <span className="text-[10px] uppercase tracking-wider text-gold/50 font-display shrink-0 pt-0.5">Иммунитеты:</span>
+          <span className="font-serif text-xs text-foreground/80">{beast.immunities.join(', ')}</span>
+        </div>
+        <div className="flex gap-2 flex-wrap items-start">
+          <span className="text-[10px] uppercase tracking-wider text-gold/50 font-display shrink-0 pt-0.5">Чувства:</span>
+          <span className="font-serif text-xs text-foreground/80">{beast.senses}</span>
+        </div>
+        <div className="flex gap-2 flex-wrap items-start">
+          <span className="text-[10px] uppercase tracking-wider text-gold/50 font-display shrink-0 pt-0.5">Языки:</span>
+          <span className="font-serif text-xs text-foreground/80">{beast.languages}</span>
+        </div>
+        <div className="flex gap-2 flex-wrap items-start">
+          <span className="text-[10px] uppercase tracking-wider text-gold/50 font-display shrink-0 pt-0.5">Среда:</span>
+          <span className="font-serif text-xs text-foreground/80">{beast.habitat}</span>
+        </div>
+      </div>
+
+      {/* Особенности */}
+      {beast.traits.length > 0 && (
+        <div>
+          <p className="text-[10px] uppercase tracking-widest text-gold/50 font-display mb-2 border-t border-gold/10 pt-3">Особенности</p>
+          <div className="space-y-2">
+            {beast.traits.map(t => (
+              <div key={t.name}>
+                <span className="font-serif font-bold text-gold/90 text-xs">{t.name}. </span>
+                <span className="font-body text-xs text-foreground/75 leading-relaxed">{t.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Действия */}
+      <div>
+        <p className="text-[10px] uppercase tracking-widest text-gold/50 font-display mb-2 border-t border-gold/10 pt-3">Действия</p>
+        <div className="space-y-2">
+          {beast.actions.map(a => (
+            <div key={a.name}>
+              <span className="font-serif font-bold text-gold/90 text-xs">{a.name}. </span>
+              <span className="font-body text-xs text-foreground/75 leading-relaxed">{a.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const BestiarySection = () => {
+  const [page, setPage] = useState(0);
+  const [dir, setDir] = useState<'left' | 'right'>('right');
+  const [animating, setAnimating] = useState(false);
+
+  const goTo = (next: number, direction: 'left' | 'right') => {
+    if (animating || next === page) return;
+    setDir(direction);
+    setAnimating(true);
+    setTimeout(() => {
+      setPage(next);
+      setAnimating(false);
+    }, 320);
+  };
+
+  const beast = BESTIARY[page];
+
+  return (
+    <section id="bestiary" className="relative z-10 py-24 container mx-auto px-4">
+      <SectionTitle eyebrow="Встреченные твари" title="Бестиарий" />
+
+      <div className="mt-14 max-w-4xl mx-auto">
+        {/* Книга */}
+        <div
+          className="relative infernal-border rounded-xl bg-card shadow-2xl overflow-hidden"
+          style={{ minHeight: '560px' }}
+        >
+          {/* Корешок книги */}
+          <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-card/50 border-r border-gold/20 z-10 hidden md:block" />
+
+          {/* Страница с анимацией */}
+          <div
+            key={page}
+            className={`absolute inset-0 ${animating ? (dir === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left') : ''}`}
+          >
+            <BeastPage beast={beast} />
+          </div>
+        </div>
+
+        {/* Навигация */}
+        <div className="flex items-center justify-between mt-6 px-2">
+          <button
+            onClick={() => goTo(page - 1, 'left')}
+            disabled={page === 0}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/30 text-gold/70 hover:text-gold hover:border-gold/60 transition-colors disabled:opacity-20 disabled:cursor-not-allowed font-serif text-sm"
+          >
+            <Icon name="ChevronLeft" size={16} />
+            Предыдущий
+          </button>
+
+          {/* Индикатор страниц */}
+          <div className="flex items-center gap-2">
+            {BESTIARY.map((b, i) => (
+              <button
+                key={b.name}
+                onClick={() => goTo(i, i > page ? 'right' : 'left')}
+                className={`transition-all duration-300 rounded-full ${i === page ? 'w-6 h-2 bg-primary' : 'w-2 h-2 bg-gold/30 hover:bg-gold/60'}`}
+                title={b.name}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={() => goTo(page + 1, 'right')}
+            disabled={page === BESTIARY.length - 1}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/30 text-gold/70 hover:text-gold hover:border-gold/60 transition-colors disabled:opacity-20 disabled:cursor-not-allowed font-serif text-sm"
+          >
+            Следующий
+            <Icon name="ChevronRight" size={16} />
+          </button>
+        </div>
+
+        {/* Счётчик */}
+        <p className="text-center font-serif italic text-gold/40 text-xs mt-3">
+          {page + 1} из {BESTIARY.length} {BESTIARY.length === 1 ? 'существа' : 'существ'}
+        </p>
+      </div>
+    </section>
+  );
+};
+
 // ─── Главная страница ────────────────────────────────────────────────────────
 
 const Index = () => {
@@ -776,6 +1029,9 @@ const Index = () => {
 
       {/* CHRONICLE */}
       <ChronicleSection />
+
+      {/* BESTIARY */}
+      <BestiarySection />
 
       {/* FOOTER */}
       <footer className="relative z-10 border-t border-gold/20 py-10 text-center">

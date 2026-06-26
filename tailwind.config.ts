@@ -103,7 +103,15 @@ export default {
 				'glow-pulse': {
 					'0%, 100%': { boxShadow: '0 0 20px hsl(var(--ember) / 0.3)' },
 					'50%': { boxShadow: '0 0 40px hsl(var(--ember) / 0.6)' }
-				}
+				},
+				'slide-in-right': {
+					'0%': { opacity: '0', transform: 'translateX(60px)' },
+					'100%': { opacity: '1', transform: 'translateX(0)' }
+				},
+				'slide-in-left': {
+					'0%': { opacity: '0', transform: 'translateX(-60px)' },
+					'100%': { opacity: '1', transform: 'translateX(0)' }
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -111,7 +119,9 @@ export default {
 				'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
 				'flicker': 'flicker 4s linear infinite',
 				'ember-rise': 'ember-rise 6s linear infinite',
-				'glow-pulse': 'glow-pulse 3s ease-in-out infinite'
+				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
+				'slide-in-right': 'slide-in-right 0.32s ease-out',
+				'slide-in-left': 'slide-in-left 0.32s ease-out',
 			}
 		}
 	},
