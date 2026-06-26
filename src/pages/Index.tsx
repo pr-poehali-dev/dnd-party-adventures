@@ -1088,6 +1088,12 @@ const Index = () => {
             <button onClick={() => scrollTo('chronicle')} className="px-8 py-3 rounded-md border border-gold/40 text-gold font-display tracking-wider hover:bg-gold/10 transition-colors">
               Читать хронику
             </button>
+            <button onClick={() => scrollTo('faces')} className="px-8 py-3 rounded-md border border-gold/40 text-gold font-display tracking-wider hover:bg-gold/10 transition-colors">
+              Лица
+            </button>
+            <button onClick={() => scrollTo('bestiary')} className="px-8 py-3 rounded-md border border-gold/40 text-gold font-display tracking-wider hover:bg-gold/10 transition-colors">
+              Бестиарий
+            </button>
           </div>
         </div>
         <button onClick={() => scrollTo('characters')} className="absolute bottom-8 left-1/2 -translate-x-1/2 text-gold/60 animate-bounce z-10">
