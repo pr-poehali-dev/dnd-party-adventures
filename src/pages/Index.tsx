@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Icon from '@/components/ui/icon';
 
 const HERO_IMG = 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/files/d5de3daf-2ae0-40d3-ab23-c8c146a45766.jpg';
@@ -242,7 +243,7 @@ const NpcLink = ({ name, portrait, role }: { name: string; portrait: string; rol
       >
         {name}
       </button>
-      {pos && typeof document !== 'undefined' && React.createPortal(
+      {pos && typeof document !== 'undefined' && createPortal(
         <span
           className="pointer-events-none animate-fade-in-up flex flex-col items-center"
           style={{ position: 'fixed', left: pos.x, top: pos.y, transform: 'translate(-50%, calc(-100% - 8px))', zIndex: 9999 }}
