@@ -773,10 +773,10 @@ const BeastPage = ({ beast }: { beast: Beast }) => (
           {beast.stats.map(s => (
             <div key={s.name} className="bg-background/50 rounded py-2 border border-gold/10">
               <p className="text-[9px] uppercase tracking-wider text-gold/50 font-display">{s.name}</p>
-              <p className="font-display text-base text-foreground mt-0.5">{s.val}</p>
+              <p className="font-display text-foreground mt-0.5" style={{ fontSize: '22px' }}>{s.val}</p>
               <div className="w-px h-2 bg-gold/20 mx-auto my-0.5" />
-              <p className="text-xs text-primary font-serif">{s.mod}</p>
-              <p className="text-[11px] text-gold/60 font-serif">{s.save}</p>
+              <p className="text-primary font-serif" style={{ fontSize: '11px' }}>{s.mod}</p>
+              <p className="text-gold/60 font-serif" style={{ fontSize: '11px' }}>{s.save}</p>
             </div>
           ))}
         </div>
@@ -920,10 +920,10 @@ const BeastModal = ({ beast, onClose }: { beast: Beast; onClose: () => void }) =
                 {beast.stats.map(s => (
                   <div key={s.name} className="bg-background/50 rounded py-2.5 border border-gold/10">
                     <p className="text-[9px] uppercase tracking-wider text-gold/50 font-display">{s.name}</p>
-                    <p className="font-display text-xl text-foreground mt-0.5">{s.val}</p>
+                    <p className="font-display text-foreground mt-0.5" style={{ fontSize: '28px' }}>{s.val}</p>
                     <div className="w-px h-2 bg-gold/20 mx-auto my-0.5" />
-                    <p className="text-sm text-primary font-serif">{s.mod}</p>
-                    <p className="text-xs text-gold/60 font-serif">{s.save}</p>
+                    <p className="text-primary font-serif" style={{ fontSize: '14px' }}>{s.mod}</p>
+                    <p className="text-gold/60 font-serif" style={{ fontSize: '14px' }}>{s.save}</p>
                   </div>
                 ))}
               </div>
