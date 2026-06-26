@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Icon from '@/components/ui/icon';
 
 const HERO_IMG = 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/files/d5de3daf-2ae0-40d3-ab23-c8c146a45766.jpg';
@@ -191,84 +191,128 @@ const FACES = [
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/9062dd1e-17ab-4e26-b32a-379552dd3221.png',
     desc: 'Пережила осаду таверны в магическом подпространстве. Попросила отряд сопроводить её к Щиту Хельма — в надежде найти Рейвенгарда.',
   },
+  {
+    name: 'Онтарр Фрум',
+    role: 'Паладин Хельма',
+    tag: 'Союзник',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/eb354872-0a0c-467f-8956-c810eff606ff.png',
+    desc: 'Дварф-паладин, державший оборону Щита Хельма. Поблагодарил отряд за спасение крепости — но потребовал вернуть Испепелитель, и получил отказ.',
+  },
+  {
+    name: 'Нири Вистлвуд',
+    role: 'Выжившая',
+    tag: 'Выжившая',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/4edcea1d-3a35-4ff7-b549-0cd86ca8e396.png',
+    desc: 'Единственная выжившая из отряда, ушедшего на поиски артефактов в Доки Драконьего Глаза. Найдена живой и доставлена в лагерь.',
+  },
+  {
+    name: 'Коровек',
+    role: 'Командир демонов',
+    tag: 'Демон',
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/61e0275e-2606-4ad2-a567-213f95ada549.png',
+    desc: 'Минотавр, командовавший демонами в таверне «Пара Чёрных Рогов». Поверил Сандору на слово и позволил забрать Испепелитель.',
+  },
 ];
 
 // ─── NPC-ссылка с всплывающим портретом ─────────────────────────────────────
 
 const NpcLink = ({ name, portrait, role }: { name: string; portrait: string; role: string }) => {
-  const [visible, setVisible] = useState(false);
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   const scrollToFace = () => {
     document.getElementById('faces')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleMouseEnter = () => {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ x: r.left + r.width / 2, y: r.top });
+    }
+  };
+
   return (
-    <span className="relative inline-block">
+    <span className="inline-block">
       <button
+        ref={btnRef}
         onClick={scrollToFace}
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setPos(null)}
         className="font-serif text-gold/90 underline decoration-gold/40 underline-offset-2 hover:text-gold transition-colors cursor-pointer"
       >
         {name}
       </button>
-      {visible && (
-        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 pointer-events-none animate-fade-in-up">
-          <span className="flex flex-col items-center">
-            <span className="w-28 rounded-md overflow-hidden infernal-border shadow-2xl block">
-              <img src={portrait} alt={name} className="w-full h-36 object-cover object-top" />
-              <span className="block bg-card px-2 py-1 text-center">
-                <span className="font-display text-xs gold-gradient block leading-tight">{name}</span>
-                <span className="font-serif italic text-[10px] text-gold/60 block">{role}</span>
-              </span>
+      {pos && typeof document !== 'undefined' && React.createPortal(
+        <span
+          className="pointer-events-none animate-fade-in-up flex flex-col items-center"
+          style={{ position: 'fixed', left: pos.x, top: pos.y, transform: 'translate(-50%, calc(-100% - 8px))', zIndex: 9999 }}
+        >
+          <span className="w-28 rounded-md overflow-hidden infernal-border shadow-2xl block">
+            <img src={portrait} alt={name} className="w-full h-36 object-cover object-top" />
+            <span className="block bg-card px-2 py-1 text-center">
+              <span className="font-display text-xs gold-gradient block leading-tight">{name}</span>
+              <span className="font-serif italic text-[10px] text-gold/60 block">{role}</span>
             </span>
-            <span className="w-2 h-2 bg-card border-r border-b border-gold/30 rotate-45 -mt-1 block" />
           </span>
-        </span>
+          <span className="w-2 h-2 bg-card border-r border-b border-gold/30 rotate-45 -mt-1 block" />
+        </span>,
+        document.body
       )}
     </span>
   );
 };
 
 // Карта имён → данные NPC для авто-замены в текстах
-const NPC_MAP: Record<string, { portrait: string; role: string }> = {
-  'Клав Икайя': {
+// Ключи — все возможные словоформы (сортируются по убыванию длины, длинные ищутся первыми)
+const NPC_DATA = {
+  klav: {
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
     role: 'Верховный Всадник',
+    forms: ['Клав Икайя', 'Клава Икайи', 'Клаву Икайе', 'Клава Икайю', 'Клавом Икайей', 'Клаве Икайе', 'Клав', 'Клава', 'Клаву', 'Клавом', 'Клаве'],
   },
-  'Клава': {
-    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
-    role: 'Верховный Всадник',
-  },
-  'Клав': {
-    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/b386d726-5608-4273-88cb-44d0ee6bb03a.png',
-    role: 'Верховный Всадник',
-  },
-  'Лилит': {
+  lilit: {
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/7e7dbbe1-2780-464e-ba71-a867dbf480c7.png',
     role: 'Отродье Клава',
+    forms: ['Лилит', 'Лилиту', 'Лилитой', 'Лилите'],
   },
-  'Моркар': {
+  morkar: {
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/a57c088a-667f-4e98-aa87-89195a879ca4.png',
     role: 'Отродье Клава',
+    forms: ['Моркар', 'Моркара', 'Моркару', 'Моркаром', 'Моркаре'],
   },
-  'Харкина Хант': {
+  harkina: {
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/d0c09442-75c8-446b-a301-744027a20211.png',
     role: 'Горожанка Элтуреля',
+    forms: ['Харкина Хант', 'Харкины Хант', 'Харкине Хант', 'Харкину Хант', 'Харкиной Хант', 'Харкина', 'Харкины', 'Харкине', 'Харкину', 'Харкиной'],
   },
-  'Харкину': {
-    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/d0c09442-75c8-446b-a301-744027a20211.png',
-    role: 'Горожанка Элтуреля',
-  },
-  'Лефит Эзим': {
+  lefit: {
     portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/9062dd1e-17ab-4e26-b32a-379552dd3221.png',
     role: 'Волшебница',
+    forms: ['Лефит Эзим', 'Лефит Эзима', 'Лефит Эзиму', 'Лефит Эзимом', 'Лефит Эзиме', 'Лефит', 'Лефита', 'Лефиту', 'Лефитом', 'Лефите'],
   },
-  'Лефит': {
-    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/9062dd1e-17ab-4e26-b32a-379552dd3221.png',
-    role: 'Волшебница',
+  ontarr: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/eb354872-0a0c-467f-8956-c810eff606ff.png',
+    role: 'Паладин Хельма',
+    forms: ['Онтарр Фрум', 'Онтарра Фрума', 'Онтарру Фруму', 'Онтарром Фрумом', 'Онтарре Фруме', 'Онтарр', 'Онтарра', 'Онтарру', 'Онтарром', 'Онтарре'],
+  },
+  neary: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/4edcea1d-3a35-4ff7-b549-0cd86ca8e396.png',
+    role: 'Выжившая',
+    forms: ['Нири Вистлвуд', 'Нири Вистлвуд', 'Нири Вистлвуд', 'Нири'],
+  },
+  korovek: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/61e0275e-2606-4ad2-a567-213f95ada549.png',
+    role: 'Командир демонов',
+    forms: ['Коровек', 'Коровека', 'Коровеку', 'Коровеком', 'Коровеке'],
   },
 };
+
+const NPC_MAP: Record<string, { portrait: string; role: string }> = {};
+for (const npc of Object.values(NPC_DATA)) {
+  for (const form of npc.forms) {
+    NPC_MAP[form] = { portrait: npc.portrait, role: npc.role };
+  }
+}
 
 // Разбивает строку на части, заменяя имена NPC на компоненты NpcLink
 const renderWithNpcLinks = (text: string): React.ReactNode => {
