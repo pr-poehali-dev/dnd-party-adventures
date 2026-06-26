@@ -982,16 +982,26 @@ const BeastPage = ({ beast }: { beast: Beast }) => (
   </div>
 );
 
-const BeastModal = ({ beast, onClose }: { beast: Beast; onClose: () => void }) => {
+const BeastModal = ({ beast, onClose, entries, index, onNavigate }: {
+  beast: Beast;
+  onClose: () => void;
+  entries: Beast[];
+  index: number;
+  onNavigate: (i: number) => void;
+}) => {
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight' && index < entries.length - 1) onNavigate(index + 1);
+      if (e.key === 'ArrowLeft' && index > 0) onNavigate(index - 1);
+    };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
-  }, [onClose]);
+  }, [onClose, index, entries, onNavigate]);
 
   return createPortal(
     <div className="fixed inset-0 z-[9998] flex items-center justify-center p-4" onClick={onClose}>
@@ -1008,6 +1018,26 @@ const BeastModal = ({ beast, onClose }: { beast: Beast; onClose: () => void }) =
         >
           <Icon name="X" size={14} />
         </button>
+
+        {/* Стрелка назад */}
+        {index > 0 && (
+          <button
+            onClick={() => onNavigate(index - 1)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-background/70 border border-gold/30 text-gold hover:text-foreground hover:bg-background/90 transition-colors"
+          >
+            <Icon name="ChevronLeft" size={18} />
+          </button>
+        )}
+
+        {/* Стрелка вперёд */}
+        {index < entries.length - 1 && (
+          <button
+            onClick={() => onNavigate(index + 1)}
+            className="absolute right-12 top-1/2 -translate-y-1/2 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-background/70 border border-gold/30 text-gold hover:text-foreground hover:bg-background/90 transition-colors"
+          >
+            <Icon name="ChevronRight" size={18} />
+          </button>
+        )}
 
         <div className="flex flex-col md:flex-row overflow-hidden" style={{ maxHeight: '90vh' }}>
           {/* Левая колонка — иллюстрация */}
@@ -1126,7 +1156,7 @@ const BestiarySection = () => {
   const [page, setPage] = useState(0);
   const [dir, setDir] = useState<'left' | 'right'>('right');
   const [animating, setAnimating] = useState(false);
-  const [modal, setModal] = useState<Beast | null>(null);
+  const [modal, setModal] = useState<{ beast: Beast; index: number } | null>(null);
 
   const chapter = BESTIARY_CHAPTERS[chapterIdx];
   const entries = chapter.entries;
@@ -1173,7 +1203,7 @@ const BestiarySection = () => {
         <div
           className="relative infernal-border rounded-xl bg-card shadow-2xl overflow-hidden cursor-pointer group"
           style={{ minHeight: '560px' }}
-          onClick={() => setModal(beast)}
+          onClick={() => setModal({ beast, index: page })}
         >
           {/* Корешок */}
           <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-card/50 border-r border-gold/20 z-10 hidden md:block" />
@@ -1235,7 +1265,15 @@ const BestiarySection = () => {
         </p>
       </div>
 
-      {modal && <BeastModal beast={modal} onClose={() => setModal(null)} />}
+      {modal && (
+        <BeastModal
+          beast={modal.beast}
+          index={modal.index}
+          entries={entries}
+          onClose={() => setModal(null)}
+          onNavigate={(i) => setModal({ beast: entries[i], index: i })}
+        />
+      )}
     </section>
   );
 };
