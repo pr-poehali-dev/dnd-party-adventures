@@ -1360,7 +1360,7 @@ const CharactersSection = () => {
 
   return (
     <section id="characters" className="relative z-10 py-24 container mx-auto px-4">
-      <SectionTitle eyebrow="Те, кто рискнул всем" title="Персонажи" />
+      <SectionTitle title="Персонажи" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
         {CHARACTERS.map((c) => (
           <article
