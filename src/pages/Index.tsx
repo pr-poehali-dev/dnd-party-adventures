@@ -50,7 +50,11 @@ const CHARACTERS = [
 ];
 
 // Бестиарий
-const BESTIARY = [
+const BESTIARY_CHAPTERS = [
+  {
+    chapter: 'Дьяволы',
+    icon: 'Flame',
+    entries: [
   {
     name: 'Бородатый дьявол',
     subtitle: 'Барбазу',
@@ -158,7 +162,152 @@ const BESTIARY = [
     ],
     description: 'Существа с необузданными жадностью и желаниями, шипастые дьяволы служат охранниками для более сильных обитателей Девяти Преисподних и их сокровищниц. Светящиеся глаза этого похожего на высокого гуманоида, покрытого острыми колючками, шипами и крючками, дьявола зорко выискивают предметы или существ, которых можно прибрать к рукам. Шипастые дьяволы известны своей бдительностью — их трудно застать врасплох, и они относятся к своим обязанностям без скуки и рассеянности.',
   },
+  {
+    name: 'Костяной дьявол',
+    subtitle: 'Осилут',
+    image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/0dba6178-d9e5-4bf7-8545-32c157402552.png',
+    tags: ['Дьявол', 'Законно-Злой', 'Большое'],
+    habitat: 'Девять Преисподних',
+    cr: '9', xp: '5000', profBonus: '+4',
+    ac: 19, initiative: '+3', hp: '142 (15к10 + 60)', speed: '40 фт., летая 40 фт.',
+    stats: [
+      { name: 'СИЛ', val: 18, mod: '+4', save: '+4' },
+      { name: 'ЛОВ', val: 16, mod: '+3', save: '+3' },
+      { name: 'ТЕЛ', val: 18, mod: '+4', save: '+4' },
+      { name: 'ИНТ', val: 13, mod: '+1', save: '+5' },
+      { name: 'МДР', val: 14, mod: '+2', save: '+6' },
+      { name: 'ХАР', val: 16, mod: '+3', save: '+6' },
+    ],
+    resistances: ['Холод', 'Дробящий / Колющий / Рубящий (немагич., кроме посеребрённых)'],
+    immunities: ['Огонь', 'Яд', 'Отравление'],
+    senses: 'Тёмное зрение 120 фт. (сквозь магическую Тьму), пассивное Восприятие 12',
+    languages: 'Инфернальный, Телепатия 120 фт.',
+    treasures: '',
+    traits: [
+      { name: 'Дьявольское зрение', desc: 'Магическая тьма не мешает тёмному зрению дьявола.' },
+      { name: 'Сопротивление магии', desc: 'Дьявол совершает с преимуществом спасброски от заклинаний и прочих магических эффектов.' },
+    ],
+    actions: [
+      { name: 'Мультиатака', desc: 'Дьявол совершает три атаки: две когтями и одну жалом.' },
+      { name: 'Коготь', desc: 'Рукопашная атака оружием: +8 к попаданию, досягаемость 10 фт., одна цель. Попадание: 8 (1к8 + 4) рубящего урона.' },
+      { name: 'Жало', desc: 'Рукопашная атака оружием: +8 к попаданию, досягаемость 10 фт., одна цель. Попадание: 13 (2к8 + 4) колющего урона плюс 17 (5к6) урона ядом. Цель должна преуспеть в спасброске Телосложения Сл 14, иначе станет отравленной на 1 минуту. Повторный спасбросок в конце каждого хода.' },
+      { name: 'Гвизарма (вариант)', desc: 'Рукопашная атака оружием: +8 к попаданию, досягаемость 10 фт. Попадание: 17 (2к12 + 4) колющего урона. Если цель не больше Огромного — схвачена (Сл высвобождения 14).' },
+    ],
+    description: 'Движимые ненавистью, вожделением и завистью, костяные дьяволы служат жестокими надсмотрщиками Девяти Преисподних. Они принуждают более слабых дьяволов к работе, получая особое наслаждение, когда их соперников понижают в ранге. Костяные дьяволы выглядят как гуманоидная оболочка с высохшей кожей, натянутой на скелетный остов — с устрашающим черепом вместо головы и хвостом скорпиона.',
+  },
+  {
+    name: 'Цепной дьявол',
+    subtitle: 'Китон',
+    image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/804bc5a9-15d1-45fd-bd3b-74c12e66d708.png',
+    tags: ['Дьявол', 'Законно-Злой', 'Средний'],
+    habitat: 'Девять Преисподних',
+    cr: '8', xp: '3900', profBonus: '+3',
+    ac: 16, initiative: '+2', hp: '85 (10к8 + 40)', speed: '30 фт.',
+    stats: [
+      { name: 'СИЛ', val: 18, mod: '+4', save: '+4' },
+      { name: 'ЛОВ', val: 15, mod: '+2', save: '+2' },
+      { name: 'ТЕЛ', val: 18, mod: '+4', save: '+7' },
+      { name: 'ИНТ', val: 11, mod: '+0', save: '+0' },
+      { name: 'МДР', val: 12, mod: '+1', save: '+4' },
+      { name: 'ХАР', val: 14, mod: '+2', save: '+5' },
+    ],
+    resistances: ['Холод', 'Дробящий / Колющий / Рубящий (немагич., кроме посеребрённых)'],
+    immunities: ['Огонь', 'Яд', 'Отравление'],
+    senses: 'Тёмное зрение 120 фт. (сквозь магическую Тьму), пассивное Восприятие 11',
+    languages: 'Инфернальный, Телепатия 120 фт.',
+    treasures: '',
+    traits: [
+      { name: 'Дьявольское зрение', desc: 'Магическая тьма не мешает тёмному зрению дьявола.' },
+      { name: 'Сопротивление магии', desc: 'Дьявол совершает с преимуществом спасброски от заклинаний и прочих магических эффектов.' },
+    ],
+    actions: [
+      { name: 'Мультиатака', desc: 'Дьявол совершает две атаки цепями.' },
+      { name: 'Цепь', desc: 'Рукопашная атака оружием: +8 к попаданию, досягаемость 10 фт. Попадание: 11 (2к6 + 4) рубящего урона. Цель схвачена (Сл 14), если нет другой схваченной цели, и получает 7 (2к6) колющего урона в начале каждого хода.' },
+      { name: 'Оживление цепей (отдых)', desc: 'До 4 видимых цепей в 60 фт. магически обрастают шипами и оживают под контролем дьявола. КД 20, 20 хитов, сопротивление колющему. Каждая может совершить одну атаку Цепь при Мультиатаке.' },
+      { name: 'Обескураживающая иллюзия (реакция)', desc: 'Если существо начинает ход в 30 фт. от дьявола — тот принимает вид мертвеца или злейшего врага. Спасбросок Мудрости Сл 14 или испуган до конца хода.' },
+    ],
+    description: 'Это зловещее исчадие носит цепи как одежду. Дьяволы цепей выступают в роли тюремщиков-садистов, наслаждающихся болью и живущих только ради того, чтобы эту боль причинять. Это они пытают души смертных, запертые в Девяти Преисподних.',
+  },
+  {
+    name: 'Игольчатый дьявол',
+    subtitle: 'Спинагон',
+    image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/08e1dbc4-a007-4835-adbd-ea6e019faa64.png',
+    tags: ['Дьявол', 'Законно-Злой', 'Маленький'],
+    habitat: 'Девять Преисподних',
+    cr: '2', xp: '450', profBonus: '+2',
+    ac: 13, initiative: '+2', hp: '22 (5к6 + 5)', speed: '20 фт., летая 40 фт.',
+    stats: [
+      { name: 'СИЛ', val: 10, mod: '+0', save: '+0' },
+      { name: 'ЛОВ', val: 15, mod: '+2', save: '+2' },
+      { name: 'ТЕЛ', val: 12, mod: '+1', save: '+1' },
+      { name: 'ИНТ', val: 11, mod: '+0', save: '+0' },
+      { name: 'МДР', val: 14, mod: '+2', save: '+2' },
+      { name: 'ХАР', val: 8,  mod: '−1', save: '−1' },
+    ],
+    resistances: ['Холод', 'Дробящий / Колющий / Рубящий (немагич., кроме посеребрённых)'],
+    immunities: ['Огонь', 'Яд', 'Отравление'],
+    senses: 'Тёмное зрение 120 фт. (сквозь магическую Тьму), пассивное Восприятие 12',
+    languages: 'Инфернальный, Телепатия 120 фт.',
+    treasures: '',
+    traits: [
+      { name: 'Дьявольское зрение', desc: 'Магическая тьма не мешает тёмному зрению дьявола.' },
+      { name: 'Облёт', desc: 'Дьявол не провоцирует атаки возможности, когда вылетает из досягаемости врага.' },
+      { name: 'Запас игл', desc: 'У дьявола 12 игл на хвосте. Отрастают после продолжительного отдыха.' },
+      { name: 'Сопротивление магии', desc: 'Дьявол совершает с преимуществом спасброски от заклинаний и прочих магических эффектов.' },
+    ],
+    actions: [
+      { name: 'Мультиатака', desc: 'Дьявол совершает две атаки: укусом и вилами, или две атаки иглами.' },
+      { name: 'Укус', desc: 'Рукопашная атака: +2 к попаданию, досягаемость 5 фт. Попадание: 5 (2к4) рубящего урона.' },
+      { name: 'Вилы', desc: 'Рукопашная атака: +2 к попаданию, досягаемость 5 фт. Попадание: 3 (1к6) колющего урона.' },
+      { name: 'Игла на хвосте', desc: 'Дальнобойная атака: +4 к попаданию, дистанция 20/80 фт. Попадание: 4 (1к4 + 2) колющего + 3 (1к6) урона огнём.' },
+    ],
+    description: 'Спинагоны служат шпионами и посредниками старших дьяволов — глаза и уши Девяти Преисподних. В свободное время они служат в инфернальных легионах летучей артиллерией, компенсируя слабость нападением толпой. Хоть они и жаждут власти, по природе трусливы и быстро рассеются, если сражение пойдёт не в их пользу.',
+  },
+    ],
+  },
+  {
+    chapter: 'Демоны',
+    icon: 'Skull',
+    entries: [
+  {
+    name: 'Алкилит',
+    subtitle: '',
+    image: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/61063f74-7c81-4870-98eb-f324df2b0312.png',
+    tags: ['Демон', 'Хаотично-Злой', 'Средний'],
+    habitat: 'Город, Подземье',
+    cr: '11', xp: '7200', profBonus: '+4',
+    ac: 17, initiative: '+4', hp: '157 (15к8 + 90)', speed: '40 фт.',
+    stats: [
+      { name: 'СИЛ', val: 12, mod: '+1', save: '+1' },
+      { name: 'ЛОВ', val: 19, mod: '+4', save: '+8' },
+      { name: 'ТЕЛ', val: 22, mod: '+6', save: '+10' },
+      { name: 'ИНТ', val: 6,  mod: '−2', save: '−2' },
+      { name: 'МДР', val: 11, mod: '+0', save: '+0' },
+      { name: 'ХАР', val: 7,  mod: '−2', save: '−2' },
+    ],
+    resistances: ['Кислота', 'Огонь', 'Холод', 'Электричество', 'Дробящий / Колющий / Рубящий'],
+    immunities: ['Яд', 'Отравление', 'Очарование', 'Испуг'],
+    senses: 'Тёмное зрение 120 фт., пассивное Восприятие 10',
+    languages: 'Понимает язык Бездны, но не говорит на нём',
+    treasures: '',
+    traits: [
+      { name: 'Аморфный', desc: 'Алкилит может перемещаться сквозь пространство шириной до 1 дюйма без протискивания.' },
+      { name: 'Обманчивая внешность', desc: 'Когда алкилит неподвижен, он неотличим от обыкновенного мха или грибка.' },
+      { name: 'Разжигание безумия', desc: 'Существо, начинающее ход в 30 фт. от алкилита, проходит спасбросок Мудрости Сл 18 или получает Помеху на следующий бросок. Провал на 5+ — эффект заклинания смятение на 1 минуту.' },
+      { name: 'Сопротивление магии', desc: 'Алкилит совершает с преимуществом спасброски от заклинаний и прочих магических эффектов.' },
+    ],
+    actions: [
+      { name: 'Мультиатака', desc: 'Алкилит совершает три атаки Щупальцем.' },
+      { name: 'Щупальце', desc: 'Рукопашная атака оружием: +8 к попаданию, досягаемость 15 фт. Попадание: 18 (4к6 + 4) урона кислотой.' },
+    ],
+    description: 'Алкилит легко принимается за грязный грибковый нарост на дверях и окнах. Везде, где он укореняется, ослабляется ткань реальности — создаётся портал для ещё более отвратительных демонов. Алкилиты происходят из отброшенных кусочков отвратительного тела Джубилекса и постепенно обретают сознание, ища путь на Материальный План.',
+  },
+    ],
+  },
 ];
+
+// Плоский список всех монстров для совместимости
+const BESTIARY = BESTIARY_CHAPTERS.flatMap(ch => ch.entries);
 
 // Хроника: дата → события → параграфы
 const CHRONICLE = [
@@ -724,16 +873,15 @@ type Beast = typeof BESTIARY[number];
 
 const BeastPage = ({ beast }: { beast: Beast }) => (
   <div className="w-full h-full flex flex-col md:flex-row overflow-hidden">
-    {/* Левая колонка — иллюстрация */}
-    <div className="relative md:w-2/5 h-56 md:h-full shrink-0 bg-background/60">
+    {/* Левая колонка — иллюстрация фиксированного размера */}
+    <div className="relative shrink-0 bg-background/60" style={{ width: '240px', minHeight: '560px' }}>
       <img
         src={beast.image}
         alt={beast.name}
-        className="w-full h-full object-contain object-center"
+        className="absolute inset-0 w-full h-full object-contain object-center"
         style={{ filter: 'drop-shadow(0 0 24px hsl(var(--primary)/0.4))' }}
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80 hidden md:block" />
-      <div className="absolute inset-0 bg-gradient-to-t from-card/90 to-transparent md:hidden" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80" />
     </div>
 
     {/* Правая колонка — статблок */}
@@ -986,45 +1134,76 @@ const BeastModal = ({ beast, onClose }: { beast: Beast; onClose: () => void }) =
 };
 
 const BestiarySection = () => {
+  const [chapterIdx, setChapterIdx] = useState(0);
   const [page, setPage] = useState(0);
   const [dir, setDir] = useState<'left' | 'right'>('right');
   const [animating, setAnimating] = useState(false);
   const [modal, setModal] = useState<Beast | null>(null);
 
+  const chapter = BESTIARY_CHAPTERS[chapterIdx];
+  const entries = chapter.entries;
+  const beast = entries[page];
+
   const goTo = (next: number, direction: 'left' | 'right') => {
     if (animating || next === page) return;
     setDir(direction);
     setAnimating(true);
-    setTimeout(() => {
-      setPage(next);
-      setAnimating(false);
-    }, 320);
+    setTimeout(() => { setPage(next); setAnimating(false); }, 320);
   };
 
-  const beast = BESTIARY[page];
+  const switchChapter = (idx: number) => {
+    if (idx === chapterIdx) return;
+    setChapterIdx(idx);
+    setPage(0);
+    setDir('right');
+  };
 
   return (
     <section id="bestiary" className="relative z-10 py-24 container mx-auto px-4">
       <SectionTitle eyebrow="Встреченные твари" title="Бестиарий" />
 
       <div className="mt-14 max-w-4xl mx-auto">
+        {/* Переключатель глав */}
+        <div className="flex gap-2 mb-4">
+          {BESTIARY_CHAPTERS.map((ch, i) => (
+            <button
+              key={ch.chapter}
+              onClick={() => switchChapter(i)}
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg border font-display tracking-wider text-sm transition-all duration-300 ${
+                i === chapterIdx
+                  ? 'bg-primary/20 border-primary text-primary'
+                  : 'border-gold/30 text-gold/60 hover:border-gold/60 hover:text-gold'
+              }`}
+            >
+              <Icon name={ch.icon as 'Flame'} size={14} />
+              {ch.chapter}
+            </button>
+          ))}
+        </div>
+
         {/* Книга */}
         <div
           className="relative infernal-border rounded-xl bg-card shadow-2xl overflow-hidden cursor-pointer group"
           style={{ minHeight: '560px' }}
           onClick={() => setModal(beast)}
         >
-          {/* Корешок книги */}
+          {/* Корешок */}
           <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-background to-card/50 border-r border-gold/20 z-10 hidden md:block" />
+
+          {/* Метка главы */}
+          <div className="absolute top-3 left-8 z-10 hidden md:flex items-center gap-1.5">
+            <Icon name={chapter.icon as 'Flame'} size={11} className="text-gold/40" />
+            <span className="text-[10px] uppercase tracking-widest font-display text-gold/40">{chapter.chapter}</span>
+          </div>
 
           {/* Иконка раскрытия */}
           <div className="absolute top-4 right-4 z-20 w-8 h-8 flex items-center justify-center rounded-full bg-background/60 border border-gold/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <Icon name="Maximize2" size={13} className="text-gold" />
           </div>
 
-          {/* Страница с анимацией */}
+          {/* Страница */}
           <div
-            key={page}
+            key={`${chapterIdx}-${page}`}
             className={`absolute inset-0 ${animating ? (dir === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left') : ''}`}
           >
             <BeastPage beast={beast} />
@@ -1043,7 +1222,7 @@ const BestiarySection = () => {
           </button>
 
           <div className="flex items-center gap-2">
-            {BESTIARY.map((b, i) => (
+            {entries.map((b, i) => (
               <button
                 key={b.name}
                 onClick={e => { e.stopPropagation(); goTo(i, i > page ? 'right' : 'left'); }}
@@ -1055,7 +1234,7 @@ const BestiarySection = () => {
 
           <button
             onClick={e => { e.stopPropagation(); goTo(page + 1, 'right'); }}
-            disabled={page === BESTIARY.length - 1}
+            disabled={page === entries.length - 1}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gold/30 text-gold/70 hover:text-gold hover:border-gold/60 transition-colors disabled:opacity-20 disabled:cursor-not-allowed font-serif text-sm"
           >
             Следующий
@@ -1064,7 +1243,7 @@ const BestiarySection = () => {
         </div>
 
         <p className="text-center font-serif italic text-gold/40 text-xs mt-3">
-          {page + 1} из {BESTIARY.length} {BESTIARY.length === 1 ? 'существа' : 'существ'} · нажми для увеличения
+          {page + 1} из {entries.length} · {chapter.chapter} · нажми для увеличения
         </p>
       </div>
 
