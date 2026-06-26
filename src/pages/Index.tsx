@@ -502,12 +502,12 @@ const FACES = [
 
 // ─── NPC-ссылка с всплывающим портретом ─────────────────────────────────────
 
-const NpcLink = ({ name, portrait, role }: { name: string; portrait: string; role: string }) => {
+const NpcLink = ({ name, portrait, role, scrollTarget = 'faces' }: { name: string; portrait: string; role: string; scrollTarget?: string }) => {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const scrollToFace = () => {
-    document.getElementById('faces')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById(scrollTarget)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleMouseEnter = () => {
@@ -596,12 +596,35 @@ const NPC_DATA = {
     role: 'Глава культистов',
     forms: ['Лаура Зураг', 'Лауры Зураг', 'Лауре Зураг', 'Лауру Зураг', 'Лаурой Зураг', 'Лаура', 'Лауры', 'Лауре', 'Лауру', 'Лаурой'],
   },
+  sandor: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/dbdb4226-b39d-4c4b-b9f3-3a4239be66d8.png',
+    role: 'Барон, Воин-Чемпион',
+    forms: ['Барон Сандор Рейвенфорт', 'Барона Сандора Рейвенфорта', 'Барону Сандору Рейвенфорту', 'Барона Сандора Рейвенфорта', 'Бароном Сандором Рейвенфортом', 'Бароне Сандоре Рейвенфорте', 'Сандор Рейвенфорт', 'Сандора Рейвенфорта', 'Сандору Рейвенфорту', 'Сандором Рейвенфортом', 'Сандоре Рейвенфорте', 'Сандор', 'Сандора', 'Сандору', 'Сандором', 'Сандоре'],
+  },
+  lyrica: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/538af9c3-cfa1-4727-98dd-de905d639f24.png',
+    role: 'Жрица Неревара',
+    forms: ['Лирика', 'Лирики', 'Лирике', 'Лирику', 'Лирикой', 'Лирике'],
+  },
+  ariana: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/8694c0d8-f21e-4312-b736-6e8d8a54b785.png',
+    role: 'Тифлинг, Чудесное дитя',
+    forms: ['Ариана', 'Арианы', 'Ариане', 'Ариану', 'Арианой', 'Арианне', 'Арианна', 'Арианны', 'Арианну', 'Арианной'],
+  },
+  xarn: {
+    portrait: 'https://cdn.poehali.dev/projects/ecffb486-95b3-48e6-ba6e-205e72c2a45d/bucket/15138bd1-8961-411e-a20a-5a1b6a400de2.png',
+    role: 'Илитири, Воин-Стрелок',
+    forms: ['Ксарн', 'Ксарна', 'Ксарну', 'Ксарном', 'Ксарне'],
+  },
 };
 
-const NPC_MAP: Record<string, { portrait: string; role: string }> = {};
-for (const npc of Object.values(NPC_DATA)) {
+const PARTY_KEYS = new Set(['sandor', 'lyrica', 'ariana', 'xarn']);
+
+const NPC_MAP: Record<string, { portrait: string; role: string; scrollTarget: string }> = {};
+for (const [key, npc] of Object.entries(NPC_DATA)) {
+  const scrollTarget = PARTY_KEYS.has(key) ? 'characters' : 'faces';
   for (const form of npc.forms) {
-    NPC_MAP[form] = { portrait: npc.portrait, role: npc.role };
+    NPC_MAP[form] = { portrait: npc.portrait, role: npc.role, scrollTarget };
   }
 }
 
@@ -613,10 +636,62 @@ const renderWithNpcLinks = (text: string): React.ReactNode => {
   return parts.map((part, i) => {
     const npc = NPC_MAP[part];
     if (npc) {
-      return <NpcLink key={i} name={part} portrait={npc.portrait} role={npc.role} />;
+      return <NpcLink key={i} name={part} portrait={npc.portrait} role={npc.role} scrollTarget={npc.scrollTarget} />;
     }
     return part;
   });
+};
+
+// ─── Модал персонажа партии ──────────────────────────────────────────────────
+
+type Character = typeof CHARACTERS[number];
+
+const CharacterModal = ({ char, onClose }: { char: Character; onClose: () => void }) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9998] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+      <div
+        className="relative z-10 w-full max-w-sm infernal-border rounded-xl overflow-hidden shadow-2xl animate-fade-in-up"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Портрет */}
+        <div className="relative h-[480px]">
+          <img src={char.portrait} alt={char.name} className="w-full h-full object-cover object-top" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/10 to-transparent" />
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-background/60 border border-gold/30 text-gold hover:text-foreground hover:bg-background/90 transition-colors"
+          >
+            <Icon name="X" size={14} />
+          </button>
+        </div>
+        {/* Инфо */}
+        <div className="bg-card px-6 py-5">
+          <h3 className="font-display text-2xl gold-gradient leading-tight">{char.name}</h3>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{char.race}</p>
+          <div className="w-10 h-px bg-gold/30 my-3" />
+          <p className="font-serif text-base text-foreground/90">{char.classLabel}</p>
+          <p className="text-xs uppercase tracking-widest text-gold/60 mt-1">{char.subLabel}</p>
+          {char.quote && (
+            <blockquote className="mt-4 border-l-2 border-gold/40 pl-3 font-serif italic text-sm text-foreground/65 leading-relaxed">
+              «{char.quote}»
+            </blockquote>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
 };
 
 // ─── Компонент NPC ───────────────────────────────────────────────────────────
@@ -1278,6 +1353,56 @@ const BestiarySection = () => {
   );
 };
 
+// ─── Секция персонажей партии ────────────────────────────────────────────────
+
+const CharactersSection = () => {
+  const [selected, setSelected] = useState<Character | null>(null);
+
+  return (
+    <section id="characters" className="relative z-10 py-24 container mx-auto px-4">
+      <SectionTitle eyebrow="Те, кто рискнул всем" title="Персонажи" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
+        {CHARACTERS.map((c) => (
+          <article
+            key={c.name}
+            className="group infernal-border rounded-lg bg-card/80 overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+            onClick={() => setSelected(c)}
+          >
+            {/* Портрет */}
+            <div className="relative h-72 overflow-hidden">
+              <img
+                src={c.portrait}
+                alt={c.name}
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent group-hover:from-card/60 transition-all duration-300" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-9 h-9 rounded-full bg-background/70 border border-gold/40 flex items-center justify-center">
+                  <Icon name="Maximize2" size={14} className="text-gold" />
+                </div>
+              </div>
+            </div>
+            {/* Инфо */}
+            <div className="p-5 flex flex-col flex-1">
+              <h3 className="font-display text-lg gold-gradient leading-tight group-hover:text-primary transition-colors">{c.name}</h3>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{c.race}</p>
+              <div className="w-10 h-px bg-gold/30 my-3" />
+              <p className="font-serif text-base text-foreground/90">{c.classLabel}</p>
+              <p className="text-xs uppercase tracking-widest text-gold/60 mt-1">{c.subLabel}</p>
+              {c.quote && (
+                <blockquote className="mt-4 border-l-2 border-gold/40 pl-3 font-serif italic text-sm text-foreground/65 leading-relaxed">
+                  «{c.quote}»
+                </blockquote>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+      {selected && <CharacterModal char={selected} onClose={() => setSelected(null)} />}
+    </section>
+  );
+};
+
 // ─── Главная страница ────────────────────────────────────────────────────────
 
 const Index = () => {
@@ -1382,40 +1507,7 @@ const Index = () => {
       </section>
 
       {/* CHARACTERS */}
-      <section id="characters" className="relative z-10 py-24 container mx-auto px-4">
-        <SectionTitle eyebrow="Те, кто рискнул всем" title="Персонажи" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
-          {CHARACTERS.map((c) => (
-            <article
-              key={c.name}
-              className="group infernal-border rounded-lg bg-card/80 overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-2"
-            >
-              {/* Портрет */}
-              <div className="relative h-72 overflow-hidden">
-                <img
-                  src={c.portrait}
-                  alt={c.name}
-                  className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
-              </div>
-              {/* Инфо */}
-              <div className="p-5 flex flex-col flex-1">
-                <h3 className="font-display text-lg gold-gradient leading-tight">{c.name}</h3>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{c.race}</p>
-                <div className="w-10 h-px bg-gold/30 my-3" />
-                <p className="font-serif text-base text-foreground/90">{c.classLabel}</p>
-                <p className="text-xs uppercase tracking-widest text-gold/60 mt-1">{c.subLabel}</p>
-                {c.quote && (
-                  <blockquote className="mt-4 border-l-2 border-gold/40 pl-3 font-serif italic text-sm text-foreground/65 leading-relaxed">
-                    «{c.quote}»
-                  </blockquote>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      <CharactersSection />
 
       {/* STORY */}
       <section id="story" className="relative z-10 py-24">
